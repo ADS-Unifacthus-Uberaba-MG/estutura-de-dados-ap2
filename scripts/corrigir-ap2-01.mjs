@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 import { execSync } from "node:child_process";
-import { appendFileSync, existsSync, readFileSync, writeFileSync, mkdtempSync, rmSync } from "node:fs";
+import { appendFileSync, copyFileSync, existsSync, readFileSync, writeFileSync, mkdtempSync, rmSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const SUMMARY_FILE = process.env.GITHUB_STEP_SUMMARY;
 const NOME_TRABALHO = "AP2-01";
-const ARQUIVO_ALUNO = "ap2-01/pilha.ts";
+const PASTA_ALUNO = "ap2-01";
 const TIMEOUT_MS = 10000;
 
 function log(md) {
@@ -60,33 +60,22 @@ function rodarArquivo(caminho, timeout = TIMEOUT_MS) {
 }
 
 // --------------------------- Código do aluno ---------------------------
-// Corta o arquivo na linha de traços logo antes de "Não edite daqui pra
-// baixo": fica só o código do aluno, sem os testes visíveis. Cada parte é
-// testada com um bloco próprio (abaixo), que cobre mais casos que o arquivo.
-const MARCADOR = "Não edite daqui pra baixo";
-const MSG_MARCADOR =
-  "O trecho 'Não edite daqui pra baixo' foi removido. Restaure o arquivo original.";
+// Os arquivos do aluno são copiados para uma pasta temporária, sem a pasta
+// `testes/` (os testes visíveis). Cada parte é testada com um arquivo de
+// teste próprio (abaixo), que importa o código do aluno e cobre mais casos
+// que os testes visíveis.
+const ARQUIVOS = {
+  no: "no.ts",
+  parte1: "parte1-pilha.ts",
+  parte2: "parte2-inverter-texto.ts",
+  parte3: "parte3-editor.ts",
+};
 const MSG_LOOP =
   "O código demorou demais (provável loop infinito). Confira a ordem das linhas no push: " +
   "primeiro `novo.proximo = this.topo`, depois `this.topo = novo`.";
-
-function extrairCodigoAluno() {
-  if (!existsSync(ARQUIVO_ALUNO)) {
-    return { erro: `Arquivo \`${ARQUIVO_ALUNO}\` não encontrado no repositório.` };
-  }
-  const linhas = readFileSync(ARQUIVO_ALUNO, "utf-8").split(/\r?\n/);
-  const iMarcador = linhas.findIndex((l) => l.includes(MARCADOR));
-  if (iMarcador === -1) return { erro: MSG_MARCADOR };
-  let corte = iMarcador;
-  for (let i = iMarcador - 1; i >= 0; i--) {
-    if (/^\s*\/\/\s*-{5,}/.test(linhas[i])) {
-      corte = i;
-      break;
-    }
-    if (linhas[i].trim() !== "") break;
-  }
-  return { codigo: linhas.slice(0, corte).join("\n") };
-}
+// Linha impressa antes dos testes: o que um console.log solto nos arquivos
+// do aluno imprimir ao ser importado fica antes dela e é ignorado.
+const INICIO = "=====INICIO-DOS-TESTES=====";
 
 function semComentarios(codigo) {
   return codigo
@@ -96,22 +85,39 @@ function semComentarios(codigo) {
     .join("\n");
 }
 
-const aluno = extrairCodigoAluno();
 const pastaTemp = mkdtempSync(join(tmpdir(), "corrigir-ap2-01-"));
+const aluno = {};
+for (const [chave, arquivo] of Object.entries(ARQUIVOS)) {
+  const caminho = join(PASTA_ALUNO, arquivo);
+  if (existsSync(caminho)) {
+    copyFileSync(caminho, join(pastaTemp, arquivo));
+    aluno[chave] = readFileSync(caminho, "utf-8");
+  }
+}
+
+function arquivosFaltando(chaves) {
+  const faltando = chaves.filter((c) => aluno[c] === undefined);
+  if (faltando.length === 0) return null;
+  const lista = faltando.map((c) => `\`${PASTA_ALUNO}/${ARQUIVOS[c]}\``).join(", ");
+  return {
+    passou: false,
+    resumo: "Arquivo não encontrado",
+    detalhe: `❌ Não encontrei: ${lista}. Restaure o arquivo original.`,
+  };
+}
 
 // Aquece o npx (baixa o tsx uma vez) para o download não contar no timeout.
-if (!aluno.erro) rodarArquivo("--version", 120000);
+rodarArquivo("--version", 120000);
 
 // Os blocos de teste ficam em texto puro (são testes, não respostas).
 // As respostas certas NÃO ficam aqui — só o hash SHA-256 da saída esperada.
 // Isso evita que um aluno que olhar este script no próprio fork veja o gabarito.
-function corrigirParte(id, nome, blocoTeste, hashEsperado, numeroLinhasEsperadas, dica) {
-  if (aluno.erro) {
-    return { nome, passou: false, resumo: "Arquivo incompleto", detalhe: `❌ ${aluno.erro}` };
-  }
+function corrigirParte(id, nome, necessarios, blocoTeste, hashEsperado, numeroLinhasEsperadas, dica) {
+  const falta = arquivosFaltando(necessarios);
+  if (falta) return { nome, ...falta };
 
-  const caminho = join(pastaTemp, `${id}.ts`);
-  writeFileSync(caminho, aluno.codigo + "\n\n" + blocoTeste + "\n");
+  const caminho = join(pastaTemp, `teste-${id}.ts`);
+  writeFileSync(caminho, blocoTeste.replace("INICIO", INICIO));
   const resultado = rodarArquivo(caminho);
 
   if (!resultado.ok) {
@@ -128,11 +134,12 @@ function corrigirParte(id, nome, blocoTeste, hashEsperado, numeroLinhasEsperadas
     };
   }
 
-  const linhasObtidas = resultado.saida
+  const todasAsLinhas = resultado.saida
     .trim()
     .split("\n")
     .map((l) => l.trim())
     .filter(Boolean);
+  const linhasObtidas = todasAsLinhas.slice(todasAsLinhas.lastIndexOf(INICIO) + 1);
 
   const textoObtido = linhasObtidas.join("\n");
   const hashObtido = sha256(textoObtido);
@@ -149,6 +156,8 @@ function corrigirParte(id, nome, blocoTeste, hashEsperado, numeroLinhasEsperadas
 }
 
 const TESTE_PARTE1 = `
+import { Pilha } from "./parte1-pilha";
+console.log("INICIO");
 const p = new Pilha<number>();
 console.log(p.estaVazia()); console.log(p.tamanho()); console.log(p.pop()); console.log(p.peek());
 p.push(10); p.push(20); p.push(30); p.imprimir();
@@ -158,11 +167,15 @@ const s = new Pilha<string>(); s.push("a"); console.log(s.pop()); console.log(s.
 `;
 
 const TESTE_PARTE2 = `
+import { inverterTexto } from "./parte2-inverter-texto";
+console.log("INICIO");
 console.log(inverterTexto("ROMA")); console.log(inverterTexto("pilha"));
 console.log(inverterTexto("a")); console.log(inverterTexto("ADS 2026"));
 `;
 
 const TESTE_PARTE3 = `
+import { Editor } from "./parte3-editor";
+console.log("INICIO");
 const ed = new Editor(); ed.desfazer(); ed.refazer();
 ed.digitar("Olá"); ed.digitar("turma"); ed.digitar("de"); ed.digitar("ADS");
 console.log(ed.textoAtual()); ed.desfazer(); ed.desfazer(); console.log(ed.textoAtual());
@@ -173,10 +186,10 @@ ed.desfazer(); ed.desfazer(); ed.desfazer(); ed.desfazer(); ed.desfazer(); conso
 // --------------------------- Verificações estáticas ---------------------------
 function verificarBigO() {
   const nome = "Complexidades Big-O preenchidas";
-  if (aluno.erro) {
-    return { nome, passou: false, resumo: "Arquivo incompleto", detalhe: `❌ ${aluno.erro}` };
-  }
-  const faltando = (aluno.codigo.match(/Big-O:\s*_{2,}/g) || []).length;
+  const falta = arquivosFaltando(["parte1", "parte2"]);
+  if (falta) return { nome, ...falta };
+  const codigo = aluno.parte1 + "\n" + aluno.parte2;
+  const faltando = (codigo.match(/Big-O:\s*_{2,}/g) || []).length;
   const aviso =
     "> O script só confere se cada `Big-O: ____` foi preenchido. Se a complexidade " +
     "está certa é avaliado pelo professor.";
@@ -193,10 +206,11 @@ function verificarBigO() {
 
 function verificarRegra() {
   const nome = "Regra — sem arrays e métodos prontos";
-  if (aluno.erro) {
-    return { nome, passou: false, resumo: "Arquivo incompleto", detalhe: `❌ ${aluno.erro}` };
-  }
-  const codigo = semComentarios(aluno.codigo);
+  // Confere os arquivos das três partes que existirem (arquivo faltando já
+  // reprova a parte correspondente).
+  const codigo = semComentarios(
+    [aluno.parte1, aluno.parte2, aluno.parte3].filter((c) => c !== undefined).join("\n")
+  );
   const padroes = [
     { regex: /\.split\s*\(/, texto: "`.split(`" },
     { regex: /\.reverse\s*\(/, texto: "`.reverse(`" },
@@ -225,6 +239,7 @@ const itens = [
     ...corrigirParte(
       "parte1",
       "Parte 1 — Classe Pilha",
+      ["no", "parte1"],
       TESTE_PARTE1,
       "a88a8cacd0de0245ba52170cf9776b059904843dbfb8e8d2c4a6e1e10fb34ec6",
       14,
@@ -237,6 +252,7 @@ const itens = [
     ...corrigirParte(
       "parte2",
       "Parte 2 — inverterTexto",
+      ["no", "parte1", "parte2"],
       TESTE_PARTE2,
       "6c96900988c1b151bcc5b43f6def1c273f4819bd0cbf528144b244e41287fc43",
       4,
@@ -248,6 +264,7 @@ const itens = [
     ...corrigirParte(
       "parte3",
       "Parte 3 — Editor (desfazer/refazer)",
+      ["no", "parte1", "parte3"],
       TESTE_PARTE3,
       "2928a8bef20594ab797d31ef6f44539d3627d20b5cd20604fd7c136cc02347a5",
       5,

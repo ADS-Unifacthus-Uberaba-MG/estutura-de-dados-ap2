@@ -13,11 +13,19 @@ naquele dia.
 
 ## Estrutura do repositório
 
-| Pasta / arquivo                  | Para que serve                                               |
-| -------------------------------- | ------------------------------------------------------------ |
-| `ap2-01/pilha.ts`                | Exercício da **AP2-01** (Pilha com Lista Ligada)             |
-| `package.json` / `tsconfig.json` | Configuração do projeto (opcional — veja Opção B abaixo)     |
-| `scripts/`, `.github/`           | Usados pela correção automática. **Não precisa mexer aqui.** |
+| Pasta / arquivo                     | Para que serve                                                   |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| `ap2-01/`                           | **AP2-01** (Pilha com Lista Ligada) — veja os arquivos abaixo    |
+| `ap2-01/no.ts`                      | Classe `No` — **já está pronta**, não precisa mexer              |
+| `ap2-01/parte1-pilha.ts`            | **Parte 1** — classe `Pilha` (você completa)                     |
+| `ap2-01/parte2-inverter-texto.ts`   | **Parte 2** — função `inverterTexto` (você completa)             |
+| `ap2-01/parte3-editor.ts`           | **Parte 3** — classe `Editor` com desfazer/refazer (você completa) |
+| `ap2-01/testes/`                    | Um arquivo de teste por parte. **Não edite** — só rode           |
+| `package.json` / `tsconfig.json`    | Configuração do projeto (opcional — veja Opção B abaixo)         |
+| `scripts/`, `.github/`              | Usados pela correção automática. **Não precisa mexer aqui.**     |
+
+> As Partes 2 e 3 usam a `Pilha` da Parte 1. Faça a Parte 1 primeiro: enquanto
+> ela não estiver funcionando, os testes das outras partes também não vão bater.
 
 > Só edite os arquivos dentro da pasta da prática do dia. O resto do
 > repositório é usado pela correção automática e não precisa ser tocado.
@@ -26,12 +34,15 @@ naquele dia.
 
 ## Regras da AP2-01
 
-- Complete **só** os trechos marcados com `// TODO`.
+- Complete **só** os trechos marcados com `// TODO` nos arquivos
+  `parte1-pilha.ts`, `parte2-inverter-texto.ts` e `parte3-editor.ts`.
 - Preencha todos os `Big-O: ____` com a complexidade de cada método.
 - **Não use arrays nem métodos prontos** (`.split`, `.reverse`, `.join`...).
   Use a sua classe `Pilha`.
-- **Não edite** o trecho final marcado como "Não edite daqui pra baixo" — ele
-  testa o seu código.
+- **Não edite** o `no.ts` nem os arquivos da pasta `testes/` — eles já estão
+  prontos e servem para testar o seu código.
+- Não apague as linhas `import` / `export` do começo dos arquivos: é por elas
+  que um arquivo enxerga a classe do outro.
 
 ---
 
@@ -59,7 +70,7 @@ pasta raiz (a que contém o `package.json`) → **Abrir no Terminal**.
 
 ## Passo 3 — Entender os blocos `// TODO`
 
-Dentro do arquivo da prática você vai ver comentários assim:
+Dentro dos arquivos de cada parte você vai ver comentários assim:
 
 ```
 // TODO
@@ -67,15 +78,19 @@ Dentro do arquivo da prática você vai ver comentários assim:
 
 - Tudo que começa com `//` é um **comentário** — o computador ignora essas linhas.
 - `TODO` é uma convenção para marcar **"isso ainda precisa ser feito"**.
-- O arquivo tem um trecho no final marcado como **"Não edite daqui pra
-  baixo"** — esse trecho testa o código que você escreveu, não mexa nele.
+- Os arquivos da pasta `testes/` usam o código que você escreveu e imprimem
+  o resultado no terminal — não mexa neles, só rode.
 
 ---
 
-## Passo 4 — Completar o arquivo
+## Passo 4 — Completar os arquivos, uma parte de cada vez
 
-Abra o arquivo `ap2-01/pilha.ts`, leia os comentários e escreva o código pedido
-em cada `// TODO`. Não esqueça de preencher os `Big-O: ____`.
+Comece pela **Parte 1** (`ap2-01/parte1-pilha.ts`), depois a **Parte 2**
+(`ap2-01/parte2-inverter-texto.ts`) e por fim a **Parte 3**
+(`ap2-01/parte3-editor.ts`). Em cada arquivo, leia os comentários e escreva o
+código pedido em cada `// TODO`. Não esqueça de preencher os `Big-O: ____`.
+
+Terminou uma parte? Rode o teste dela (Passo 5) antes de ir para a próxima.
 
 ---
 
@@ -84,14 +99,20 @@ em cada `// TODO`. Não esqueça de preencher os `Big-O: ____`.
 ### Opção A — mais simples, sem instalar nada no projeto
 
 ```
-npx tsx ap2-01/pilha.ts
+npx tsx ap2-01/testes/parte1.ts
+npx tsx ap2-01/testes/parte2.ts
+npx tsx ap2-01/testes/parte3.ts
 ```
+
+(rode só o da parte que você acabou de fazer)
 
 ### Opção B — usando os scripts do projeto
 
 ```
 npm install
-npm run ap2-01
+npm run ap2-01:parte1
+npm run ap2-01:parte2
+npm run ap2-01:parte3
 ```
 
 ---
@@ -99,7 +120,8 @@ npm run ap2-01
 ## O que esperar no terminal
 
 Se o seu código estiver certo, o terminal deve imprimir exatamente os valores
-indicados nos comentários do trecho de testes, sem nenhuma linha em vermelho.
+indicados nos comentários do arquivo de teste da parte, sem nenhuma linha em
+vermelho.
 
 ---
 
@@ -169,8 +191,8 @@ cd <nome-da-pasta-clonada>
 
 ### Passo 6 — Completar o exercício da prática do dia
 
-Siga os Passos 1 a 5 acima no arquivo da pasta da prática (`ap2-01/pilha.ts`
-na AP2-01).
+Siga os Passos 1 a 5 acima nos arquivos da pasta da prática (`ap2-01/` na
+AP2-01).
 
 ### Passo 7 — Enviar suas alterações para o seu fork
 

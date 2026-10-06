@@ -4,7 +4,9 @@
   "private": true,
   "description": "Estrutura de Dados — UniFACTHUS — Práticas avaliativas do 2º bimestre (AP2-01, AP2-02, ...)",
   "scripts": {
-    "ap2-01": "tsx ap2-01/pilha.ts"
+    "ap2-01:parte1": "tsx ap2-01/testes/parte1.ts",
+    "ap2-01:parte2": "tsx ap2-01/testes/parte2.ts",
+    "ap2-01:parte3": "tsx ap2-01/testes/parte3.ts"
   },
   "devDependencies": {
     "tsx": "^4.19.0",
