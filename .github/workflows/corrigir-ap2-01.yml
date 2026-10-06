@@ -1,0 +1,36 @@
+name: Correção — AP2-01
+
+# Roda automaticamente quando um PR muda arquivos dentro de ap2-01/
+# (fluxo de entrega: aluno faz fork, edita o código, abre um PR de volta
+# para este repositório). Também pode ser rodado manualmente pela aba
+# "Actions" → "Correção — AP2-01" → "Run workflow" (workflow_dispatch),
+# sem depender de nenhum PR.
+#
+# O relatório vai para o "Summary" da execução (não para um comentário no
+# PR): em PRs vindos de fork o GITHUB_TOKEN é somente leitura.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "ap2-01/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  corrigir:
+    name: Corrigir AP2-01 (Pilha com Lista Ligada)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o código do Pull Request
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Rodar correção automática — AP2-01
+        run: node scripts/corrigir-ap2-01.mjs

@@ -1,0 +1,13 @@
+{
+  "name": "estrutura-de-dados-praticas-ap2",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Estrutura de Dados — UniFACTHUS — Práticas avaliativas do 2º bimestre (AP2-01, AP2-02, ...)",
+  "scripts": {
+    "ap2-01": "tsx ap2-01/pilha.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4"
+  }
+}
