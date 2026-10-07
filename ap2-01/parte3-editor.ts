@@ -3,7 +3,6 @@
 // Estrutura de Dados · UniFACTHUS · ADS 2026/02
 // Prof. Pierre Mendes Salatiel
 // ============================================================
-//
 // Complete os trechos marcados com // TODO usando duas Pilhas da Parte 1.
 // Para testar, rode:
 //
@@ -18,16 +17,36 @@ export class Editor {
   private refazerPilha = new Pilha<string>();
 
   digitar(palavra: string): void {
-    // TODO
+    this.historico.push(palavra);
+
+    // TODO DIGITAR ALGO NOVO, LIMPA A PILHA DE REFAZER
+
+    while (this.refazerPilha.estaVazia()) {
+      this.refazerPilha.pop();
+    }
+
+  
   }
 
-  desfazer(): void {
+  desfazer(): void { 
+    const palavra = this.historico.pop();
+    if (palavra !==null) {
+      this.refazerPilha.push(palavra);
+      
+    }
+  
     // TODO
   }
 
   refazer(): void {
+    const palavra = this.refazerPilha.pop();
+    if (palavra !== null) {
+      this.historico.push(palavra);
+    }
     // TODO
   }
+   
+
 
   // PRONTO — não precisa mexer
   textoAtual(): string {
