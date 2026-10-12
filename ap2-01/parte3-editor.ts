@@ -18,15 +18,20 @@ export class Editor {
   private refazerPilha = new Pilha<string>();
 
   digitar(palavra: string): void {
-    // TODO
+    this.historico.push(palavra);
+    this.refazerPilha = new Pilha<string>();
   }
 
   desfazer(): void {
-    // TODO
+    if(!this.historico.estaVazia()){
+      this.refazerPilha.push(this.historico.pop() as string);
+    }
   }
 
   refazer(): void {
-    // TODO
+    if(!this.refazerPilha.estaVazia()){
+      this.historico.push(this.refazerPilha.pop() as string);
+    }
   }
 
   // PRONTO — não precisa mexer
