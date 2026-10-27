@@ -21,6 +21,7 @@ naquele dia.
 | `ap2-01/parte2-inverter-texto.ts`   | **Parte 2** — função `inverterTexto` (você completa)             |
 | `ap2-01/parte3-editor.ts`           | **Parte 3** — classe `Editor` com desfazer/refazer (você completa) |
 | `ap2-01/testes/`                    | Um arquivo de teste por parte. **Não edite** — só rode           |
+| `ap2-02-broker/`                    | **AP2-02** (PagaJá Broker: Fila, Pilha, retry, DLQ e prioridade) — o enunciado completo está em [`ap2-02-broker/README.md`](ap2-02-broker/README.md) |
 | `package.json` / `tsconfig.json`    | Configuração do projeto (opcional — veja Opção B abaixo)         |
 | `scripts/`, `.github/`              | Usados pela correção automática. **Não precisa mexer aqui.**     |
 
