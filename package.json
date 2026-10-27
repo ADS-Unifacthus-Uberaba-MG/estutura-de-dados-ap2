@@ -6,7 +6,16 @@
   "scripts": {
     "ap2-01:parte1": "tsx ap2-01/testes/parte1.ts",
     "ap2-01:parte2": "tsx ap2-01/testes/parte2.ts",
-    "ap2-01:parte3": "tsx ap2-01/testes/parte3.ts"
+    "ap2-01:parte3": "tsx ap2-01/testes/parte3.ts",
+    "progresso": "npm --prefix ap2-02-broker run progresso --silent",
+    "nivel1": "npm --prefix ap2-02-broker run nivel1 --silent",
+    "nivel2": "npm --prefix ap2-02-broker run nivel2 --silent",
+    "nivel3": "npm --prefix ap2-02-broker run nivel3 --silent",
+    "nivel4": "npm --prefix ap2-02-broker run nivel4 --silent",
+    "nivel5": "npm --prefix ap2-02-broker run nivel5 --silent",
+    "testes": "npm --prefix ap2-02-broker run testes --silent",
+    "simular": "npm --prefix ap2-02-broker run simular --silent",
+    "verificar": "npm --prefix ap2-02-broker run verificar --silent"
   },
   "devDependencies": {
     "tsx": "^4.19.0",
