@@ -1,0 +1,22 @@
+{
+  "name": "ap2-02-pagaja-broker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AP2-02 — PagaJá Broker: mini-broker de mensagens de pagamento com Fila, Pilha, retry, DLQ e Fila de Prioridade",
+  "scripts": {
+    "nivel1": "node --import tsx --test --test-reporter=spec testes/nivel1.test.ts",
+    "nivel2": "node --import tsx --test --test-reporter=spec testes/nivel2.test.ts",
+    "nivel3": "node --import tsx --test --test-reporter=spec testes/nivel3.test.ts",
+    "nivel4": "node --import tsx --test --test-reporter=spec testes/nivel4.test.ts",
+    "nivel5": "node --import tsx --test --test-reporter=spec testes/nivel5.test.ts",
+    "testes": "node --import tsx --test --test-reporter=spec testes/nivel1.test.ts testes/nivel2.test.ts testes/nivel3.test.ts testes/nivel4.test.ts testes/nivel5.test.ts",
+    "progresso": "tsx scripts/progresso.ts",
+    "verificar": "tsx scripts/verificar.ts",
+    "simular": "tsx src/simulacao.ts",
+    "tipos": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4"
+  }
+}
