@@ -78,6 +78,11 @@ com Fila, Pilha e Fila de Prioridade escritas por você.
    npm install
    ```
 
+   > Todos os comandos desta prática (`npm run progresso`, `npm run nivel1`...)
+   > funcionam tanto **dentro da pasta `ap2-02-broker`** quanto na **pasta raiz
+   > do repositório** (a que tem a pasta `ap2-01`). Rode o `npm install` na
+   > pasta em que o seu terminal estiver.
+
 3. Veja o seu placar:
 
    ```
