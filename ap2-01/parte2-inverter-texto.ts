@@ -13,8 +13,18 @@
 
 import { Pilha } from "./parte1-pilha";
 
-// PARTE 2 — Big-O: ____
+// PARTE 2 — Big-O: O(n)
 export function inverterTexto(texto: string): string {
   // TODO: use a Pilha<string>
-  return "";
+  const pilha = new Pilha<string>();
+  for (let i = 0; i < texto.length; i++) {
+    pilha.push(texto[i]);
+  }
+  let textoInvertido = "";
+  while (!pilha.estaVazia()) {
+    textoInvertido += pilha.pop();
+  }
+  return textoInvertido;
 }
+
+console.log(inverterTexto("ROMA"))

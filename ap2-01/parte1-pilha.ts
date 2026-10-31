@@ -17,33 +17,41 @@ export class Pilha<T> {
   private topo: No<T> | null = null;
   private quantidade: number = 0;
 
-  // Big-O: ____
+  // Big-O: O(1)
   push(valor: T): void {
-    // TODO
+    const novoNo = new No(valor);
+    novoNo.proximo = this.topo;
+    this.topo = novoNo;
+    this.quantidade++;
   }
 
-  // Big-O: ____
+  // Big-O: O(1)
   pop(): T | null {
-    // TODO
+    const noRemovido = this.topo;
+    if (noRemovido !== null) {
+      this.topo = noRemovido.proximo;
+      this.quantidade--;
+      return noRemovido.valor;
+    } 
     return null;
   }
 
-  // Big-O: ____
+  // Big-O: O(1)
   peek(): T | null {
-    // TODO
+    if (this.topo !== null) {
+      return this.topo.valor;
+    }
     return null;
   }
 
-  // Big-O: ____
+  // Big-O: O(1)
   estaVazia(): boolean {
-    // TODO
-    return true;
+    return this.topo === null;
   }
 
-  // Big-O: ____
+  // Big-O: O(1)
   tamanho(): number {
-    // TODO
-    return 0;
+    return this.quantidade;
   }
 
   // PRONTO — Big-O: O(n)
