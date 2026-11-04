@@ -30,34 +30,55 @@ export class Fila<T> {
   // Coloca o valor no FIM da fila.
   // Caso especial: a fila está vazia (quem vira o head? e o tail?).
   enqueue(valor: T): void {
-    // TODO
+    const novoNo: No<T> = {
+        valor : valor,
+        proximo : null
+    };
+    if (this.head === null) {
+      this.head = novoNo;
+      this.tail = novoNo;
+    } else {
+      this.tail!.proximo = novoNo;
+      this.tail = novoNo;
+    } 
+    this.quantidade++; // TODO 
   }
 
   // Big-O esperado: O(1)
   // Tira e devolve o valor do COMEÇO da fila. Fila vazia? Devolve null.
   // Cuidado: se a fila ficar vazia, o tail também precisa voltar a ser null.
   dequeue(): T | null {
-    // TODO
-    return null;
+    if (this.head ===null) {
+      return null;
+    }
+
+    const valor = this.head.valor;
+    this.head = this.head.proximo;
+    this.quantidade--;
+    
+    if (this.head ===null) {
+      this.tail = null;
+    }   
+    return valor; // TODO
   }
 
   // Big-O esperado: O(1)
   // Devolve o primeiro da fila SEM tirar. Fila vazia? Devolve null.
   peek(): T | null {
-    // TODO
-    return null;
+    if (this.head === null) {
+      return null;
+    }   
+    return this.head.valor; // TODO
   }
 
   // Big-O esperado: O(1)
   estaVazia(): boolean {
-    // TODO
-    return true;
+    return this.quantidade === 0; // TODO
   }
 
   // Big-O esperado: O(1) — não conte nó por nó, use a quantidade.
   tamanho(): number {
-    // TODO
-    return 0;
+    return this.quantidade; // TODO
   }
 
   // PRONTO — Big-O: O(n). Ajuda a enxergar a fila quando um teste falhar:

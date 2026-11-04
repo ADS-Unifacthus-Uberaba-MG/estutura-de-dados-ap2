@@ -52,6 +52,28 @@ export function formamPar(abre: string, fecha: string): boolean {
 // fecha? E se aparecer um que fecha com a pilha vazia? E no fim do texto,
 // a pilha precisa estar como?
 export function payloadValido(payload: string): boolean {
-  // TODO: use uma Pilha<string>
-  return false;
+  if (payload.length === 0){
+    return false;
+  }
+
+  const pilha = new Pilha<string>();
+
+  for (let i = 0; i < payload.length; i++){
+    const caractere = payload[i];
+
+    if(ehAbertura(caractere)){
+      pilha.push(caractere);
+    } else if (ehFechamento(caractere)){
+      if (pilha.estaVazia()){
+        return false;
+      }
+
+      const abre = pilha.pop();
+
+      if (abre === null || !formamPar(abre, caractere)){
+        return false;
+      }
+    }
+  }
+  return pilha.estaVazia(); // TODO: use uma Pilha<string>
 }
