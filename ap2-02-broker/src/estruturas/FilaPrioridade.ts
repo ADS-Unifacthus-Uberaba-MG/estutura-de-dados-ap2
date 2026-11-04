@@ -44,32 +44,65 @@ export class FilaPrioridade<T> {
   // frente (o novo entra DEPOIS de todos com a mesma prioridade, use <=).
   // Casos para pensar: lista vazia? novo vai antes do head? vai no meio? no fim?
   enqueue(valor: T, prioridade: number): void {
-    // TODO
+    const novoNo = new NoPrioridade(valor, prioridade)
+    
+    if (this.head === null) {
+      this.head = novoNo;
+    }else if (prioridade < this.head.prioridade) {
+      novoNo.proximo = this.head
+      this.head = novoNo;
+    }else {
+      let atual = this.head;
+
+      while (
+        atual.proximo !== null &&
+        atual.proximo.prioridade <= prioridade
+      ) {
+        atual = atual.proximo;
+      }
+
+      novoNo.proximo = atual.proximo;
+      atual.proximo = novoNo;
+
+    }
+    
+    this.quantidade++; // TODO
+    
   }
 
   // Big-O esperado: O(1) — o mais urgente está sempre no head.
   // Fila vazia? Devolve null.
   dequeue(): T | null {
-    // TODO
-    return null;
+    if (this.head == null){
+      return null;
+    }
+
+    const valor = this.head.valor;
+    this.head = this.head.proximo;
+    this.quantidade--;
+
+    return valor; // TODO
   }
 
   // Big-O esperado: O(1)
   peek(): T | null {
-    // TODO
-    return null;
+    if (this.head == null){
+      return null;
+    }
+    
+    return this.head.valor; // TODO
   }
 
   // Big-O esperado: O(1)
   estaVazia(): boolean {
-    // TODO
-    return true;
+    
+    return this.head == null; // TODO
   }
 
   // Big-O esperado: O(1)
   tamanho(): number {
-    // TODO
-    return 0;
+
+    return this.quantidade; // TODO
   }
 
   // PRONTO — Big-O: O(n). Ajuda a enxergar a fila quando um teste falhar.

@@ -19,51 +19,39 @@ export class Pilha<T> {
 
   // Big-O: O(1)
   push(valor: T): void {
-    const novoNo : No<T> = {
-      valor : valor,
-      proximo : this.topo
-    }
-    this.topo = novoNo
-    this.quantidade++
+    const novoNo = new No(valor);
+    novoNo.proximo = this.topo;
+    this.topo = novoNo;
+    this.quantidade++;
   };
 
   // Big-O: O(1)
   pop(): T | null {
-    if (this.topo == null){
-      return null;
+    const noRemovido = this.topo;
+    if (noRemovido !== null){
+      this.topo = noRemovido.proximo;
+      this.quantidade--;
+      return noRemovido.valor;
     }
-    const valorRemovido = this.topo.valor;
-    this.topo = this.topo.proximo
-    this.quantidade++;
-    return valorRemovido;
+    return null;
   }
 
   // Big-O: O(1)
   peek(): T | null {
-    if (this.topo == null){
-      return null;
+    if (this.topo !== null){
+      return this.topo.valor;
     }
-    return this.topo.valor;
+    return null;
   }
 
   // Big-O: O(1)
   estaVazia(): boolean {
-    if (this.topo == null){
-      return true;
-    }
-    else {
-      return false;
-    }
+    return this.topo == null;
   }
 
   // Big-O: O(1)
   tamanho(): number {
-    if (this.quantidade == 0){
-       return 0;
-    }
-    else{
-      return this.quantidade;
-    }
+    return this.quantidade;
   }
 
   // PRONTO — Big-O: O(n)

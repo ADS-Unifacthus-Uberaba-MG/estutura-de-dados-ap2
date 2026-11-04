@@ -65,23 +65,31 @@ export class Broker {
   // Nível 3: coloque a mensagem no fim da Fila.
   // Nível 5: se o modo for "PRIORIDADE", use a filaPrioridade com prioridadeDe(msg.tipo).
   private entrarNaFila(msg: Mensagem): void {
-    // TODO
+    if (this.modo === "PRIORIDADE"){
+      this.filaPrioridade.enqueue(msg, prioridadeDe(msg.tipo));
+    } else {
+      this.fila.enqueue(msg); // TODO
+    }
   }
 
   // Big-O esperado: O(1)
   // Nível 3: tire a próxima mensagem da Fila (ou null, se vazia).
   // Nível 5: no modo "PRIORIDADE", tire da filaPrioridade.
   private sairDaFila(): Mensagem | null {
-    // TODO
-    return null;
+    if (this.modo === "PRIORIDADE") {
+      return this.filaPrioridade.dequeue();
+    }
+    return this.fila.dequeue(); // TODO
   }
 
   // Big-O esperado: O(1)
   // Quantas mensagens estão esperando na fila principal.
   // (Nível 5: lembre que no modo "PRIORIDADE" a fila é outra.)
   pendentes(): number {
-    // TODO
-    return 0;
+    if (this.modo === "PRIORIDADE"){
+      return this.filaPrioridade.tamanho();
+    }
+    return this.fila.tamanho(); // TODO
   }
 
   // ------------------------------------------------------------------
@@ -92,8 +100,12 @@ export class Broker {
   // Payload inválido: conta em rejeitadas e devolve false (não entra na fila).
   // Payload válido: entra na fila e devolve true.
   publicar(msg: Mensagem): boolean {
-    // TODO
-    return false;
+    if (!payloadValido(msg.payload)){
+      this.rejeitadas++;
+      return false;
+    }
+    this.entrarNaFila(msg);
+    return true; // TODO
   }
 
   // Big-O esperado: O(1) no FIFO
@@ -107,16 +119,36 @@ export class Broker {
   //     FIM da fila (retry) e conta em reprocessadas;
   //   - senão: vai para a DLQ e conta em naDLQ.
   consumir(processar: Processador): Mensagem | null {
-    // TODO
-    return null;
+    const msg = this.sairDaFila();
+
+    if (msg === null){
+      return null;
+    }
+
+    if (processar(msg)){
+      this.processadas++;
+    } else{
+      msg.tentativas++;
+
+      if (msg.tentativas < MAX_TENTATIVAS){
+        this.entrarNaFila(msg);
+        this.reprocessadas++;
+      } else {
+        this.dlq.enqueue(msg);
+        this.naDLQ++;
+      }
+    }
+    return msg; // TODO
   }
 
   // Big-O esperado: O(n) se nada falhar (n = mensagens na fila);
   // com falhas, cada mensagem passa no máximo MAX_TENTATIVAS vezes.
   // Consome até a fila principal esvaziar e devolve o relatório.
   processarTudo(processar: Processador): Relatorio {
-    // TODO
-    return this.montarRelatorio();
+    while (this.pendentes() > 0){
+      this.consumir(processar);
+    }
+    return this.montarRelatorio(); // TODO
   }
 
   // ------------------------------------------------------------------
@@ -126,8 +158,7 @@ export class Broker {
   // Big-O esperado: O(1)
   // Quantas mensagens estão na DLQ.
   tamanhoDLQ(): number {
-    // TODO
-    return 0;
+    return this.dlq.tamanho(); // TODO
   }
 
   // PRONTO — Big-O: O(1). Junta os contadores num Relatorio.
