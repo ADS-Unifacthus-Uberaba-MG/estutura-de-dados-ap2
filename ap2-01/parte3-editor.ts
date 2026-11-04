@@ -17,17 +17,27 @@ export class Editor {
   private historico = new Pilha<string>();
   private refazerPilha = new Pilha<string>();
 
-  digitar(palavra: string): void {
-    // TODO
-  }
+   digitar(palavra: string): void {
+        this.historico.push(palavra);
 
-  desfazer(): void {
-    // TODO
-  }
+        while (!this.refazerPilha.estaVazia()) {
+            this.refazerPilha.pop();
+        }
+    }
 
-  refazer(): void {
-    // TODO
-  }
+    desfazer(): void {
+        if (!this.historico.estaVazia()) {
+            const palavra = this.historico.pop() as string;
+            this.refazerPilha.push(palavra);
+        }
+    }
+
+    refazer(): void {
+        if (!this.refazerPilha.estaVazia()) {
+            const palavra = this.refazerPilha.pop() as string;
+            this.historico.push(palavra);
+        }
+    }
 
   // PRONTO — não precisa mexer
   textoAtual(): string {
